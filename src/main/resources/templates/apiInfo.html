@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>API Document</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+
+    <style>
+        .container-custom {
+            padding: 20px;
+        }
+        .section-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .swagger-container {
+            margin-top: 20px;
+        }
+        iframe {
+            width: 100%;
+            height: 80vh;
+            border: 1px solid #ddd;
+        }
+        .table th, .table td {
+            text-align: center; /* 텍스트 가운데 정렬 */
+        }
+        .table-bordered {
+            border: 1px solid black; /* 테이블 테두리 색상 변경 */
+            border-collapse: collapse; /* 테이블 내부 셀의 경계를 합침 */
+        }
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid black; /* 테이블 셀 테두리 색상 변경 */
+        }
+        .table-bordered thead th {
+            border: 1px solid black; /* thead 셀 테두리 색상 변경 */
+        }
+        pre code {
+            background-color: black; /* 배경색 검정색으로 변경 */
+            color: white; /* 글자색 흰색으로 변경 */
+            padding: 10px;
+            border-radius: 5px;
+            display: block;
+        }
+        tbody td {
+            font-weight: bold;
+            color: black;
+        }
+    </style>
+</head>
+<body id="page-top">
+<!-- Page Wrapper -->
+<div id="wrapper">
+    <!-- Sidebar -->
+    <div th:replace="~{bootstrap/sidebar.html}"></div>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+            <!-- Topbar -->
+            <div th:replace="~{bootstrap/header.html}"></div>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Keycloak(24.0.3) Admin REST API</h1>
+                </div>
+
+                <!-- Access Token 발급 -->
+                <div class="card shadow mb-4 bg-gray-200">
+                    <!-- Card Header - Accordion -->
+                    <a href="#getAccessTokenApi" class="d-block card-header py-3" data-toggle="collapse"
+                       role="button" aria-expanded="false" aria-controls="getAccessTokenApi">
+                        <h6 class="m-0 font-weight-bold text-primary">Access Token 발급</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse" id="getAccessTokenApi">
+                        <div class="card-body">
+                            <h4 class="m-0 font-weight-bold text-danger">Request</h4>
+                            <hr>
+                            <h5 class="m-0 font-weight-bold text-success">POST<br>/realms/{realm}/protocol/openid-connect/token</h5>
+                            <br>
+                            <h5 class="m-0 font-weight-bold text-gray-900">Authorization</h5>
+                            <table class="table table-bordered" id="getAccessTokenApiTable1" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Username</th>
+                                    <th>Password</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Basic Auth</td>
+                                    <td>{your-client-id}</td>
+                                    <td>{your-client-secret}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <h5 class="m-0 font-weight-bold text-gray-900">Headers</h5>
+                            <table class="table table-bordered" id="getAccessTokenApiTable2" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Content-Type</td>
+                                    <td>application/json</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <h5 class="m-0 font-weight-bold text-gray-900">Body (x-www-form-urlencoded)</h5>
+                            <table class="table table-bordered" id="getAccessTokenApiTable3" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>grant_type</td>
+                                    <td>password</td>
+                                </tr>
+                                <tr>
+                                    <td>username</td>
+                                    <td>{user_id}</td>
+                                </tr>
+                                <tr>
+                                    <td>password</td>
+                                    <td>{user_password}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <hr>
+                            <h4 class="m-0 font-weight-bold text-danger">Response</h4>
+                            <hr>
+                            <pre>
+<code class="language-json">{
+    "access_token": {access_token},
+    "expires_in": 1740,
+    "refresh_expires_in": 1800,
+    "refresh_token": {refresh_token},
+    "token_type": "Bearer",
+    "not-before-policy": 1718607542,
+    "session_state": "760c6c90-82.........",
+    "scope": "email profile"
+}</code>
+                            </pre>
+                            <table class="table table-bordered" id="getAccessTokenApiResponse" width="30%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Message</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>200</td>
+                                    <td>OK</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logout -->
+                <div class="card shadow mb-4 bg-gray-200">
+                    <!-- Card Header - Accordion -->
+                    <a href="#getLogoutApi" class="d-block card-header py-3" data-toggle="collapse"
+                       role="button" aria-expanded="false" aria-controls="getLogoutApi">
+                        <h6 class="m-0 font-weight-bold text-primary">Logout</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse" id="getLogoutApi">
+                        <div class="card-body">
+                            <h4 class="m-0 font-weight-bold text-danger">Request</h4>
+                            <hr>
+                            <h5 class="m-0 font-weight-bold text-success">POST<br>/realms/{realm}/protocol/openid-connect/logout</h5>
+                            <br>
+                            <h5 class="m-0 font-weight-bold text-gray-900">Body (x-www-form-urlencoded)</h5>
+                            <table class="table table-bordered" id="getLogoutApiTable1" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>client_id</td>
+                                    <td>{client_id}</td>
+                                </tr>
+                                <tr>
+                                    <td>client_secret</td>
+                                    <td>{client_secret}</td>
+                                </tr>
+                                <tr>
+                                    <td>refresh_token</td>
+                                    <td>{refresh_token}</td>
+                                </tr>
+                                <tr>
+                                    <td>post_logout_redirect_uri</td>
+                                    <td>{post_logout_redirect_uri}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <hr>
+                            <h4 class="m-0 font-weight-bold text-danger">Response</h4>
+                            <hr>
+                            <pre>
+<code class="language-json">{}</code>
+                            </pre>
+                            <table class="table table-bordered" id="getLogoutApiResponse" width="30%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Message</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>204</td>
+                                    <td>No Content</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 사용자 목록 및 상태 조회 -->
+                <div class="card shadow mb-4 bg-gray-200">
+                    <!-- Card Header - Accordion -->
+                    <a href="#getUserInfoApi" class="d-block card-header py-3" data-toggle="collapse"
+                       role="button" aria-expanded="false" aria-controls="getUserInfoApi">
+                        <h6 class="m-0 font-weight-bold text-primary">사용자 목록 및 상태 조회</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse" id="getUserInfoApi">
+                        <div class="card-body">
+                            <h4 class="m-0 font-weight-bold text-danger">Request</h4>
+                            <hr>
+                            <h4 class="m-0 font-weight-bold text-success">GET<br>/admin/realms/{realm}/ui-ext/brute-force-user?briefRepresentation=true&first=0&max=11&q=</h4>
+                            <br>
+                            <h5 class="m-0 font-weight-bold text-gray-900">Authorization</h5>
+                            <table class="table table-bordered" id="getUserInfoApiTable1" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Token</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Bearer Token</td>
+                                    <td>{accessToken}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <hr>
+                            <h4 class="m-0 font-weight-bold text-danger">Response</h4>
+                            <hr>
+                            <pre>
+<code class="language-json">{
+    "id": {id},
+    "username": {username},
+    "firstName": {firstName},
+    "lastName": {lastName},
+    "email": {email},
+    "emailVerified": true,
+    "createdTimestamp": 1715821276443,
+    "enabled": true,
+    "access": {
+        "manageGroupMembership": true,
+        "view": true,
+        "mapRoles": true,
+        "impersonate": true,
+        "manage": true
+    },
+    "bruteForceStatus": {
+        "numFailures": 0,
+        "disabled": false,
+        "lastIPFailure": "n/a",
+        "lastFailure": 0
+    }
+}</code>
+                            </pre>
+                            <table class="table table-bordered" id="getUserInfoApiResponse" width="30%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Message</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>200</td>
+                                    <td>OK</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 특정 사용자 계정 잠금 해제 -->
+                <div class="card shadow mb-4 bg-gray-200">
+                    <!-- Card Header - Accordion -->
+                    <a href="#unlockUserApi" class="d-block card-header py-3" data-toggle="collapse"
+                       role="button" aria-expanded="false" aria-controls="unlockUserApi">
+                        <h6 class="m-0 font-weight-bold text-primary">특정 사용자 계정 잠금 해제</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse" id="unlockUserApi">
+                        <div class="card-body">
+                            <h4 class="m-0 font-weight-bold text-danger">Request</h4>
+                            <hr>
+                            <h4 class="m-0 font-weight-bold text-success">DELETE<br>/admin/realms/{realm}/attack-detection/brute-force/users/{userId}</h4>
+                            <br>
+                            <h5 class="m-0 font-weight-bold text-gray-900">Authorization</h5>
+                            <table class="table table-bordered" id="unlockUserApiTable1" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Token</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Bearer Token</td>
+                                    <td>{accessToken}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <hr>
+                            <h4 class="m-0 font-weight-bold text-danger">Response</h4>
+                            <hr>
+                            <pre>
+<code class="language-json">{}</code>
+                            </pre>
+                            <table class="table table-bordered" id="unlockUserApiResponse" width="30%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Message</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>204</td>
+                                    <td>No Content</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 활성화 상태인 세션 조회 -->
+                <div class="card shadow mb-4 bg-gray-200">
+                    <!-- Card Header - Accordion -->
+                    <a href="#getOnlineSessionApi" class="d-block card-header py-3" data-toggle="collapse"
+                       role="button" aria-expanded="false" aria-controls="getOnlineSessionApi">
+                        <h6 class="m-0 font-weight-bold text-primary">활성화 상태인 세션 조회</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse" id="getOnlineSessionApi">
+                        <div class="card-body">
+                            <h4 class="m-0 font-weight-bold text-danger">Request</h4>
+                            <hr>
+                            <h4 class="m-0 font-weight-bold text-success">GET<br>/admin/realms/{realm}/ui-ext/sessions?first=0&max=11&type=REGULAR&search=</h4>
+                            <br>
+                            <h5 class="m-0 font-weight-bold text-gray-900">Authorization</h5>
+                            <table class="table table-bordered" id="getOnlineSessionApiTable1" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Token</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Bearer Token</td>
+                                    <td>{accessToken}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <hr>
+                            <h4 class="m-0 font-weight-bold text-danger">Response</h4>
+                            <hr>
+                            <pre>
+<code class="language-json">{
+    "id": {id},
+    "username": {username},
+    "userId": {userId},
+    "ipAddress": {ipAddress},
+    "start": 1719365574000,
+    "lastAccess": 1719365575000,
+    "transientUser": false,
+    "type": "REGULAR",
+    "clients": {
+        {clientId}: {clientName}
+    }
+}</code>
+                            </pre>
+                            <table class="table table-bordered" id="getOnlineSessionApiResponse" width="30%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Message</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>200</td>
+                                    <td>OK</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 비활성화 상태인 세션 조회 -->
+                <div class="card shadow mb-4 bg-gray-200">
+                    <!-- Card Header - Accordion -->
+                    <a href="#getOfflineSessionApi" class="d-block card-header py-3" data-toggle="collapse"
+                       role="button" aria-expanded="false" aria-controls="getOfflineSessionApi">
+                        <h6 class="m-0 font-weight-bold text-primary">비활성화 상태인 세션 조회</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse" id="getOfflineSessionApi">
+                        <div class="card-body">
+                            <h4 class="m-0 font-weight-bold text-danger">Request</h4>
+                            <hr>
+                            <h4 class="m-0 font-weight-bold text-success">GET<br>/admin/realms/{realm}/ui-ext/sessions?first=0&max=11&type=OFFLINE&search=</h4>
+                            <hr>
+                            <h5 class="m-0 font-weight-bold text-gray-900">Authorization</h5>
+                            <table class="table table-bordered" id="getOfflineSessionApiTable1" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Token</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Bearer Token</td>
+                                    <td>{accessToken}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <hr>
+                            <h4 class="m-0 font-weight-bold text-danger">Response</h4>
+                            <hr>
+                            <pre>
+<code class="language-json">{
+    "id": {id},
+    "username": {username},
+    "userId": {userId},
+    "ipAddress": {ipAddress},
+    "start": 1719365574000,
+    "lastAccess": 1719365575000,
+    "transientUser": false,
+    "type": "OFFLINE",
+    "clients": {
+        {clientId}: {clientName}
+    }
+}</code>
+                            </pre>
+                            <table class="table table-bordered" id="getOfflineSessionApiResponse" width="30%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Message</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>200</td>
+                                    <td>OK</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <div th:replace="~{bootstrap/footer.html}"></div>
+        <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Bootstrap core JavaScript-->
+<script src="../vendor/jquery/jquery.min.js"></script>
+<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="../js/sb-admin-2.min.js"></script>
+
+</body>
+</html>

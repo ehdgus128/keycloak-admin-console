@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+
+    <style>
+        .container-custom {
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .section-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            width: 100%;
+            text-align: center;
+        }
+        .chart-container {
+            height: 450px;
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+        #wrapper {
+            display: flex;
+            height: 100%;
+            overflow: hidden;
+        }
+        #content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+        }
+        #hiddenTable {
+            display: none;
+        }
+    </style>
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <div th:replace="~{bootstrap/sidebar.html}"></div>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div th:replace="~{bootstrap/header.html}"></div>
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <h1 class="h3 mb-2 text-gray-800" th:if="${session.roles.contains('admin')}">Keycloak Dashboard Test</h1>
+                <br>
+
+                <!-- Content Row -->
+                <div class="row">
+
+                    <div class="col-xl-8 col-lg-7">
+
+                        <!-- Area Chart -->
+                        <div class="card shadow mb-4 chart-container">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">시간대 별 접속 현황</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-area">
+                                    <canvas id="myAreaChart"></canvas>
+                                </div>
+                                <hr>
+                                Styling for the area chart can be found in the
+                                <code>/js/demo/chart-area-demo.js</code> file.
+                            </div>
+                        </div>
+
+                        <!-- Bar Chart -->
+                        <div class="card shadow mb-4 chart-container">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">사용자 별 로그인 현황</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-bar">
+                                    <canvas id="myBarChart"></canvas>
+                                </div>
+                                <hr>
+                                Styling for the bar chart can be found in the
+                                <code>/js/demo/chart-bar-demo.js</code> file.
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Donut Chart -->
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="card shadow mb-4 chart-container">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">클라이언트 별 로그인 현황</h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <div class="chart-pie pt-4">
+                                    <canvas id="myPieChart"></canvas>
+                                </div>
+                                <hr>
+                                Styling for the donut chart can be found in the
+                                <code>/js/demo/chart-pie-demo.js</code> file.
+                            </div>
+                        </div>
+
+                        <div class="card shadow mb-4 chart-container">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">로그인 실패 원인 분석</h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <div class="chart-pie pt-4">
+                                    <canvas id="myPieChart2"></canvas>
+                                </div>
+                                <hr>
+                                Styling for the donut chart can be found in the
+                                <code>/js/demo/chart-pie-demo.js</code> file.
+                            </div>
+                        </div>
+                </div>
+                <p>
+                    사용자 : <span id="username" th:text="${name}"></span><br><br>
+                    이메일 : <span id="useremail" th:text="${email}"></span><br><br>
+                    Client List :
+                <ul>
+                    <li th:each="client : ${clientList}" th:text="${client}"></li>
+                </ul><br><br>
+                clientLoginCounts : <span id="clientLoginCounts" th:text="${clientLoginCounts}"></span><br><br>
+                </p>
+
+                <!-- JSON 데이터를 표시할 부분 -->
+                <div id="clientLoginCountsContainer"></div>
+
+                <table id="hiddenTable">
+                    <thead>
+                    <tr>
+                        <th>Hour</th>
+                        <th>Count</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="eventCount : ${eventCounts}">
+                        <td th:text="${eventCount[0]}"></td>
+                        <td th:text="${eventCount[1]}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- JSON 데이터를 숨겨진 요소로 포함 -->
+                <div id="userLoginCountsJson" th:text="${userLoginCountsJson}" style="display:none;"></div>
+                <div id="loginErrorsJson" th:text="${loginErrorsJson}" style="display:none;"></div>
+
+            </div>
+            <!-- /.container-fluid -->
+            <div id="accessTokenContainer">
+                <p class="section-title">Access Token</p>
+                <p id="accessToken" th:text="${accessToken}"></p>
+                <p class="section-title">Refresh Token</p>
+                <p id="refreshToken" th:text="${refreshToken}"></p>
+                <p class="section-title">Roles</p>
+                <p id="roles" th:text="${session.roles}"></p>
+            </div>
+        </div>
+        <div th:replace="~{bootstrap/footer.html}"></div>
+    </div>
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<script src="../vendor/jquery/jquery.min.js"></script>
+<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="../js/sb-admin-2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // 클라이언트 로그인 카운트 JSON 데이터 처리
+        var clientLoginCountsJson = document.getElementById('clientLoginCounts').innerText;
+        var clientLoginCounts = JSON.parse(clientLoginCountsJson);
+
+        var clientIds = [];
+        var loginCounts = [];
+        for (var i = 0; i < clientLoginCounts.length; i++) {
+            clientIds.push(clientLoginCounts[i].clientId);
+            loginCounts.push(clientLoginCounts[i].count);
+        }
+
+        // 클라이언트 로그인 카운트 HTML 생성
+        var clientLoginCountsHtml = '';
+        for (var i = 0; i < clientLoginCounts.length; i++) {
+            clientLoginCountsHtml += '<p>clientId : ' + clientLoginCounts[i].clientId + '<br>';
+            clientLoginCountsHtml += 'loginCount : ' + clientLoginCounts[i].count + '</p>';
+        }
+        document.getElementById('clientLoginCountsContainer').innerHTML = clientLoginCountsHtml;
+
+        // 도넛 차트 업데이트
+        var ctx = document.getElementById("myPieChart");
+        var myPieChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: clientIds,
+                datasets: [{
+                    data: loginCounts,
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'],
+                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#f4b619', '#e02d1b', '#6e707e'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                },
+                legend: {
+                    display: false
+                },
+                cutoutPercentage: 80,
+            },
+        });
+
+        // 테이블에서 데이터 가져오기
+        var table = document.querySelector("table tbody");
+        var rows = table.querySelectorAll("tr");
+        var eventCounts = [];
+
+        rows.forEach(function(row) {
+            var cols = row.querySelectorAll("td");
+            var hour = parseInt(cols[0].innerText);
+            var count = parseInt(cols[1].innerText);
+            eventCounts.push([hour, count]);
+        });
+
+        var hours = Array.from({ length: 24 }, (_, i) => (i < 10 ? '0' : '') + i + ':00'); // 00:00 ~ 23:00 생성
+        var counts = new Array(24).fill(0); // 카운트 초기화
+
+        for (var i = 0; i < eventCounts.length; i++) {
+            var hour = eventCounts[i][0];
+            counts[hour] = eventCounts[i][1];
+        }
+
+        // Area Chart 업데이트
+        var ctx = document.getElementById("myAreaChart");
+        var myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: hours,
+                datasets: [{
+                    label: "Login Counts",
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(78, 115, 223, 0.05)",
+                    borderColor: "rgba(78, 115, 223, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                    pointBorderColor: "rgba(78, 115, 223, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                    pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    data: counts,
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 25,
+                        top: 25,
+                        bottom: 0
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        time: {
+                            unit: 'hour'
+                        },
+                        gridLines: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 24
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            maxTicksLimit: 5,
+                            padding: 10,
+                        },
+                        gridLines: {
+                            color: "rgb(234, 236, 244)",
+                            zeroLineColor: "rgb(234, 236, 244)",
+                            drawBorder: false,
+                            borderDash: [2],
+                            zeroLineBorderDash: [2]
+                        }
+                    }],
+                },
+                legend: {
+                    display: false
+                },
+                tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    titleMarginBottom: 10,
+                    titleFontColor: '#6e707e',
+                    titleFontSize: 14,
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    intersect: false,
+                    mode: 'index',
+                    caretPadding: 10,
+                    callbacks: {
+                        label: function(tooltipItem, chart) {
+                            var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                            return datasetLabel + ': ' + tooltipItem.yLabel;
+                        }
+                    }
+                }
+            }
+        });
+
+        // 사용자 로그인 카운트 데이터를 처리하고 바 차트를 업데이트
+        var userLoginCountsJson = document.getElementById('userLoginCountsJson').innerText;
+        var userLoginCounts = JSON.parse(userLoginCountsJson);
+
+        var userIds = [];
+        var userLoginCountsData = [];
+        for (var i = 0; i < userLoginCounts.length; i++) {
+            userIds.push(userLoginCounts[i].userId);
+            userLoginCountsData.push(userLoginCounts[i].count);
+        }
+
+        var ctx = document.getElementById("myBarChart");
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: userIds,
+                datasets: [{
+                    label: "User Login Counts",
+                    backgroundColor: "#4e73df",
+                    hoverBackgroundColor: "#2e59d9",
+                    borderColor: "#4e73df",
+                    data: userLoginCountsData,
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 25,
+                        top: 25,
+                        bottom: 0
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 10
+                        },
+                        maxBarThickness: 25,
+                    },
+                    y: {
+                        ticks: {
+                            min: 0,
+                            max: Math.max(...userLoginCountsData) + 10,
+                            maxTicksLimit: 5,
+                            padding: 10,
+                        },
+                        grid: {
+                            color: "rgb(234, 236, 244)",
+                            zeroLineColor: "rgb(234, 236, 244)",
+                            drawBorder: false,
+                            borderDash: [2],
+                            zeroLineBorderDash: [2]
+                        }
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        titleMarginBottom: 10,
+                        titleFontColor: '#6e707e',
+                        titleFontSize: 14,
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function(tooltipItem, chart) {
+                                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                                return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+            // 로그인 에러 데이터 처리하고 도넛 차트 업데이트
+            var loginErrorsJson = document.getElementById('loginErrorsJson').innerText;
+            var loginErrors = loginErrorsJson.split(',');
+
+            var errorLabels = [];
+            var errorCounts = [];
+            for (var i = 0; i < loginErrors.length; i += 2) {
+                errorLabels.push(loginErrors[i]);
+                errorCounts.push(parseInt(loginErrors[i + 1]));
+            }
+
+            var ctx = document.getElementById("myPieChart2");
+            var myPieChart2 = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: errorLabels,
+                    datasets: [{
+                        data: errorCounts,
+                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'],
+                        hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#f4b619', '#e02d1b', '#6e707e'],
+                        hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                    },
+                    legend: {
+                        display: false
+                    },
+                    cutoutPercentage: 80,
+                },
+            });
+        });
+</script>
+</body>
+</html>
